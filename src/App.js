@@ -1,25 +1,26 @@
-import logo from './logo.svg';
+import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import './App.css';
+import HomeContainer from './containers/HomeContainer';
+import { ThemeProvider } from '@mui/material';
+import { PengaturanContainer } from './containers/PengaturanContainer';
 
-function App() {
+export default function App() {
+  const masuk = 1
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        {masuk === 1 ?(
+          <>
+            <Route path='/' element={<PengaturanContainer />} />
+          </>
+        ) : (
+          <>
+            <Route path='/beranda' element={<HomeContainer />}/>
+          </>
+        )}
+      </Routes>
+    </Router>
   );
 }
-
-export default App;
