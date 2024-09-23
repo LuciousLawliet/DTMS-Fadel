@@ -9,7 +9,7 @@ const Footer = () => {
                 width: '100%',
                 bottom: 0,
                 position: 'fixed',
-                height: '4%',
+                height: 40,
                 backgroundColor: '#0555AE'
             }}
         >
@@ -27,12 +27,10 @@ const Footer = () => {
                         color: 'white'
                     }}
                 >
-                    {/* Copyright © 2024 IT Team PT Rajawali Nusindo */}
                     2024 © Copyright IT - TEAM
                 </Typography>
             </Container>
         </Box>
-        
     )
 }
 

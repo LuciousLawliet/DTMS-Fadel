@@ -8,12 +8,12 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import EditIcon from "@mui/icons-material/Edit";
-import { Grid, MenuItem, Typography } from "@mui/material";
+import { Grid, Menu, MenuItem, Select, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import NativeSelect from "@mui/material/NativeSelect";
-import Select from "../../Components/Select";
 import { useEditHakAkses } from "../../graphql/services/HakAkses";
 import { GET_HAK_AKSES, useHakAkses } from "../../graphql/services/HakAkses";
+import { ButtonCustom } from "../../Components/Button";
 
 const UbahHakAkses = ({ row }) => {
   const [open, setOpen] = React.useState(false);
@@ -83,14 +83,17 @@ const UbahHakAkses = ({ row }) => {
   if (error) return `Submission error! ${error.message}`;
 
   return (
-    <React.Fragment>
+    <React.Fragment >
       <EditIcon variant="outlined" onClick={handleClickOpen}></EditIcon>
       <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
-        <DialogTitle>UBAH HAK AKSES</DialogTitle>
-        <DialogContent dividers>
-          <Grid container marginLeft="5%">
-            <Grid item xs={3}>
-              <DialogContentText>ID</DialogContentText>
+        {/* <DialogTitle sx={{paddingTop: '0'}}>UBAH HAK AKSES</DialogTitle> */}
+        <Typography sx={{paddingLeft: '5%', paddingTop: '4%', fontSize: '25px'}}>UBAH HAK AKSES</Typography>
+        <DialogContent dividers sx={{marginLeft: '5%', marginRight: '5%'}}>
+          <Grid container >
+            <Grid item xs={3} sx={{marginBottom: '3%'}}>
+              <DialogContentText sx={{ fontSize: '12', color: 'black' }}>
+                ID
+              </DialogContentText>
             </Grid>
             <Grid item xs={9}>
               <Typography
@@ -103,8 +106,8 @@ const UbahHakAkses = ({ row }) => {
                 {formData.kode}
               </Typography>
             </Grid>
-            <Grid item xs={3}>
-              <DialogContentText sx={{ paddingTop: "15%" }}>
+            <Grid item xs={3} sx={{marginBottom: '3%'}}>
+              <DialogContentText sx={{ paddingTop: "9%", fontSize: '12', color: 'black' }}>
                 Hak Akses
               </DialogContentText>
             </Grid>
@@ -116,31 +119,50 @@ const UbahHakAkses = ({ row }) => {
                 value={formData.nama}
                 onChange={handleChange}
                 sx={{
-                  width: "90%",
+                  width: "100%",
                 }}
               />
+              {/* <input
+                  value={formData.nama}
+                  onChange={
+                    handleChange
+                  }
+                  size="45"
+                ></input> */}
             </Grid>
             <Grid item xs={3}>
-              <DialogContentText sx={{ paddingTop: "10%" }}>
+              <DialogContentText sx={{ paddingTop: "10%", fontSize: '12', color: 'black' }}>
                 Status
               </DialogContentText>
             </Grid>
             <Grid item xs={9}>
               <FormControl
+                
                 sx={{
-                  width: "90%",
+                  width: "100%",
+                  marginTop: '1%'
                 }}
                 size="small"
               >
-                <NativeSelect
-                  variant="outlined"
+                {/* <NativeSelect
+                  
                   value={formData.status}
                   onChange={handleFieldChange}
                 >
                   <option value={"Aktif"}>Aktif</option>
                   <option value={"Tidak Aktif"}>Tidak Aktif</option>
-                </NativeSelect>
+                </NativeSelect> */}
+                <Select 
+                  value={formData.status}
+                  onChange={handleFieldChange}
+                >
+                  <MenuItem value={"Aktif"}>Aktif</MenuItem>
+                  <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
+                  {/* <option value={"Aktif"}>Aktif</option>
+                  <option value={"Tidak Aktif"}>Tidak Aktif</option> */}
+                </Select>
               </FormControl>
+
             </Grid>
           </Grid>
           <DialogActions>
@@ -152,21 +174,23 @@ const UbahHakAkses = ({ row }) => {
               marginBottom="5%"
             >
               <Grid item>
-                <Button
+                {/* <Button
                   variant="contained"
                   size="small"
                   type="submit"
                   onClick={handleSimpan}
                 >
                   SIMPAN
-                </Button>
+                </Button> */}
+                <ButtonCustom data={"SIMPAN"} onClick={handleSimpan} />
               </Grid>
               <Grid item>
-                <Button variant="contained" size="small" onClick={handleClose}>
+                {/* <Button variant="contained" size="small" onClick={handleClose}>
                   BATAL
-                </Button>
+                </Button> */}
+                <ButtonCustom data={"BATAL"} status={"cancel"} onClick={handleClose} />
               </Grid>
-            </Grid>
+            </Grid> 
           </DialogActions>
         </DialogContent>
       </Dialog>

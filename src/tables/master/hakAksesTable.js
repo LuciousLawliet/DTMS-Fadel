@@ -6,8 +6,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import UbahHakAkses from "../../content/master/ubahhakakses.js";
 import { useHakAkses } from "../../graphql/services/HakAkses.js";
 
@@ -20,14 +21,30 @@ const HakAksesTable = () => {
   ];
 
   const { data, loading, error } = useHakAkses();
+  const [page, setPage] = useState(0);
+  const [rowPage, setRowPage] = useState(5);
+
   if (loading) return "Loading";
   if (error) return `Submission error! ${error.message}`;
 
   const rows = data.getHakAksesByKode;
+  const labelRowsPerPage = "Baris per halaman:";
+  const labelDisplayedRows = ({ from, to, count }) => {
+    return `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`
+  }
+
+  const handleChangePage = (event, newpage) => {
+    setPage(newpage);
+  };
+
+  const handleRowsPerPage = (event) => {
+    setRowPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <Paper>
-      <TableContainer>
+      <TableContainer sx={{ width: '100%', maxHeight: 380, borderRadius: '5px' }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -49,7 +66,7 @@ const HakAksesTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows.slice(page * rowPage, page * rowPage + rowPage).map((row) => (
               <TableRow
                 key={row.id}
                 sx={{
@@ -78,6 +95,21 @@ const HakAksesTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        page={page}
+        count={rows.length}
+        rowsPerPage={rowPage}
+        component="div"
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleRowsPerPage}
+        labelDisplayedRows={labelDisplayedRows}
+        labelRowsPerPage={labelRowsPerPage}
+        sx={{
+          fontSize: 15,
+          fontWeight: 500,
+        }}
+      ></TablePagination>
     </Paper>
   );
 };

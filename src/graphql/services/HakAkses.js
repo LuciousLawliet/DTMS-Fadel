@@ -49,8 +49,10 @@ export const DELETE_HAK_AKSES = gql`
   }
 `;
 
-export const useHakAkses = () => {
-  return useQuery(GET_HAK_AKSES);
+export const useHakAkses = (limit, offset ) => {
+  return useQuery(GET_HAK_AKSES, {
+    variables: {limit, offset}
+  });
 };
 
 export const useAddHakAkses = () => {

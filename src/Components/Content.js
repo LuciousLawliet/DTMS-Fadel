@@ -1,45 +1,39 @@
-import React from "react";
-import { Container, Box, Button, Stack, Typography } from '@mui/material'
+import React, { useState } from "react";
+import { Container, Box, Button, Stack, Typography, Grid } from "@mui/material";
 import MasterTable from "./MasterTable";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
 import TambahHakAkses from "../content/master/tambahhakakses";
+import HakAkses from "../content/master/hakakses";
+import { useLocation } from "react-router-dom";
 
-const Content = () => {
-    const handleClick = () =>{
-        //<UbahHakAkses />
-    }
-    return (
+const RenderComponent = ({ indeks }) => {
+  switch (indeks) {
+    case "12":
+      return <HakAkses />;
+      break;
+
+    default:
+      return (
         <Box
-            sx={{
-                width: '70%',
-                marginTop: '0.8%',
-                marginRight: '2%',
-                right: 0,
-                position: 'fixed',
-                height: '74%',
-                backgroundColor: '#F6F1F1',
-                padding: '2% 3% 0% 3%',
-                borderRadius: '5px'
-            }}
-        >
-            <Typography sx={{ fontWeight: 400, fontSize: '20px', textAlign: "center" }}>
-                Master Hak Akses
-            </Typography>
+          // sx={{
+          //   width: "70%",
+          //   marginTop: "0",
+          //   marginRight: "2%",
+          //   right: 0,
+          //   position: "fixed",
+          //   height: "74%",
+          //   backgroundColor: "#F6F1F1",
+          //   padding: "2% 3% 0% 3%",
+          //   borderRadius: "5px",
+          // }}
+        />
+      );
+      break;
+  }
+};
 
-            <TambahHakAkses />
+const Content = ({ isSelected }) => {
+  return <RenderComponent indeks={isSelected} />;
+};
 
-            <SearchIcon sx={{ marginLeft: '93%', marginBottom: '1%' }}></SearchIcon>
-            <MasterTable />
-            <Container
-                sx={{
-                    justifyContent: 'center',
-                    textAlign: 'center',
-
-                }}
-            >
-            </Container>
-        </Box>
-    )
-}
-
-export default Content
+export default Content;

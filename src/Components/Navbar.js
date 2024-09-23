@@ -12,10 +12,19 @@ const Navbar = ({user}) => {
         setAnchorElUser(event.currentTarget)
     }
 
-    const getInitials = 'Fadel Irham'
-
     const handleCloseUserMenu = () => {
         setAnchorElUser(null)
+    }
+
+    const getInitials = (nama) => {
+        const allNames = nama.trim().split(' ')
+        const initials = allNames.reduce((acc, curr, index) => {
+          if(index === 0 || index === allNames.length - 1){
+            acc = `${acc}${curr.charAt(0).toUpperCase()}`
+          }
+          return acc
+        }, '')
+        return initials
     }
 
     const handleMenuItem = async (event, type) => {
@@ -24,14 +33,16 @@ const Navbar = ({user}) => {
     }
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ 
+            width: '100%',
+            flexGrow: 1 }}>
             <AppBar 
                 elevation={0}
                 sx={{
                     position: 'fixed',
                     backgroundColor: '#0555AE',
                     color: '#FFDC53',
-                    height: '7.5%',
+                    height: 72,
                     justifyContent: "center"
                 }}
             >
@@ -95,13 +106,13 @@ const Navbar = ({user}) => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 700, fontSize: '12px', textAlign: 'end', color: 'white' }}>
-                                FADEL IRHAM
+                                {user.nama.toUpperCase()}
                             </Typography>
                             <Typography sx={{ fontWeight: 500, fontSize: '12px', textAlign: 'end', color: 'white' }}>
-                                KANTOR PUSAT - TEKNOLOGI INFORMASI
+                                {user.branch_name.toUpperCase()} - {user.departemen.toUpperCase()}
                             </Typography>
                             <Typography sx={{ fontWeight: 500, fontSize: '12px', textAlign: 'end', color: 'white' }}>
-                                666 - SUPER USER
+                                {user.role_id.toUpperCase()} - {user.role_access.toUpperCase()}
                             </Typography>
 
                         </Container>
@@ -110,8 +121,8 @@ const Navbar = ({user}) => {
                             <ArrowDropDownIcon/>
                         </IconButton>
 
-                        <Avatar alt='' sx={{ width: 50, height: 50, fontWeight: 700}} >
-                            FD
+                        <Avatar alt={user.nama} sx={{ width: 50, height: 50, fontWeight: 700}} >
+                            {getInitials(user.nama)}
                         </Avatar>
                         
                         <Menu
@@ -140,9 +151,7 @@ const Navbar = ({user}) => {
                                 <Typography textAlign="center" sx={{fontSize: '14px', fontWeight: 500}}>Keluar</Typography>
                             </MenuItem>
                         </Menu>
-                    </Box>
-
-                    
+                    </Box>  
                 </Toolbar>
             </AppBar>
         </Box>
