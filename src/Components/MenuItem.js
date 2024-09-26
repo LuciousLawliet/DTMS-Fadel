@@ -9,13 +9,18 @@ import {
   List,
 } from "@mui/material";
 
-const MenuItem = ({ menuData, levelPref, isSelected, setIsSelected, setPathName }) => {
+const MenuItem = ({
+  menuData,
+  levelPref,
+  isSelected,
+  setIsSelected,
+  setPathName,
+}) => {
   const [open, setOpen] = React.useState(true);
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedMenu, setSelectedMenu] = React.useState(null);
   const [openMenu, setOpenMenu] = React.useState({});
   const [openMenuItem, setOpenMenuItem] = React.useState({});
-  
 
   // const levelPref = "level";
   // const menuData = [
@@ -58,8 +63,8 @@ const MenuItem = ({ menuData, levelPref, isSelected, setIsSelected, setPathName 
       ...prev,
       [level]: !prev[level],
     }));
-    setIsSelected(indeks)
-    setPathName(path)
+    setIsSelected(indeks);
+    setPathName(path);
   };
 
   // const renderMenuItems = (items, levelPrefix) => {
@@ -86,20 +91,30 @@ const MenuItem = ({ menuData, levelPref, isSelected, setIsSelected, setPathName 
     return items.map((item, index) => {
       const level = `${levelPrefix}-${index}`;
       //const isClicked = item.children && item.children.map((childMenu) => (childMenu.children && childMenu.children.some(son => son.id === isSelected)))
-      const hasClickedChild = item.children && item.children.some(child => child.children && child.children.some(son => son.id === isSelected))
-      const isClicked = item.children && item.children.some(child => child.id === isSelected)
-      
+      const hasClickedChild =
+        item.children &&
+        item.children.some(
+          (child) =>
+            child.children &&
+            child.children.some((son) => son.id === isSelected)
+        );
+      const isClicked =
+        item.children && item.children.some((child) => child.id === isSelected);
+
       return (
         <Grid key={level} container direction="row" paddingLeft="20px">
           {/* <ListItemButton onClick={() => handleToggle(level)}>
             <ListItemText primary={item.name} />
           </ListItemButton> */}
-          {item.hasChildren === 'TRUE' && item.path_menu && (
+          {item.hasChildren === "TRUE" && item.path_menu && (
             <Grid item>
               <ArrowRightIcon
                 onClick={() => handleToggle(level, item.id, item.path_menu)}
                 sx={{
-                  transform: isSelected === item.id || hasClickedChild || isClicked? "rotate(90deg)" : "rotate(0deg)",
+                  transform:
+                    isSelected === item.id || hasClickedChild || isClicked
+                      ? "rotate(90deg)"
+                      : "rotate(0deg)",
                   transition: "transform 0.3s ease",
                 }}
               />
@@ -107,14 +122,35 @@ const MenuItem = ({ menuData, levelPref, isSelected, setIsSelected, setPathName 
           )}
           <Grid item>
             {item.hasChildren && (
-              <Typography onClick={() => handleToggle(level, item.id, item.path_menu)} sx={{fontSize: 15, fontWeight: isSelected === item.id || hasClickedChild || isClicked? '700' : '400'}}>
-              {item.nama}
+              <Typography
+                onClick={() => handleToggle(level, item.id, item.path_menu)}
+                sx={{
+                  fontSize: 15,
+                  fontWeight:
+                    isSelected === item.id || hasClickedChild || isClicked
+                      ? "700"
+                      : "400",
+                }}
+              >
+                {item.nama}
               </Typography>
             )}
           </Grid>
-          <Grid container direction="row" sx={{marginBottom: item.hasChildren === 'TRUE' ? '0px' : '8px'}}>
+          <Grid
+            container
+            direction="row"
+            sx={{
+              marginBottom: item.hasChildren === "TRUE" ? "0px" : "8px",
+              paddingLeft: item.hasChildren === "TRUE" ? "7px" : "0px",
+              paddingRight: item.hasChildren === "FALSE" ? "100px" : "0px"
+            }}
+          >
             {item.children && item.children.length > 0 && (
-              <Collapse in={isSelected === item.id ||  hasClickedChild || isClicked} timeout="auto" unmountOnExit>
+              <Collapse
+                in={isSelected === item.id || hasClickedChild || isClicked}
+                timeout="auto"
+                unmountOnExit
+              >
                 <Typography>{renderMenuItems(item.children, level)}</Typography>
               </Collapse>
             )}

@@ -12,16 +12,29 @@ import {
   useHakAkses,
 } from "../../graphql/services/HakAkses";
 import { ButtonCustom } from "../../Components/Button";
+import { StatusModal } from "../../Components/Modal";
+import { useEffect } from "react";
 
-export default function UbahHakAkses() {
+export default function TambahHakAkses({ dataGet }) {
   const [open, setOpen] = React.useState(false);
   const [kode, setKode] = React.useState("");
   const [hakAkses, setHakAkses] = React.useState("");
   const [hasil, setHasil] = React.useState("Aktif");
-  const [addHakAkses, { loadingAdd, error }] = useAddHakAkses();
-  const { refetch } = useHakAkses({
-    refetchQueries: [{ query: GET_HAK_AKSES }],
-  });
+  const [handleModal, setHandleModal] = React.useState(false);
+  const [openStatus, setOpenStatus] = React.useState(false);
+  const [statusTitle, setStatusTitle] = React.useState("");
+  const [statusType, setStatusType] = React.useState("");
+  const [addHakAkses, { loadingAdd }] = useAddHakAkses();
+  const { refetch } = useHakAkses();
+  //const { data, loading, error, refetch } = useHakAkses();
+
+  // if (loading) return "Submitting...";
+  // if (error) return `Submission error! ${error.message}`;
+  // const useHandleDelete = () => {
+  //   useDeleteHakAkses(kode)
+  // }
+
+  //const rows = data.getHakAksesByKode;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,19 +42,49 @@ export default function UbahHakAkses() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleSimpan = () => {
-    addHakAkses({ variables: { kode: kode, nama: hakAkses, status: hasil } });
-    setOpen(false);
+    setHandleModal(false);
+    setOpenStatus(false);
     refetch();
   };
 
-  if (loadingAdd) return "Submitting...";
-  if (error) return `Submission error! ${error.message}`;
-  // const useHandleDelete = () => {
-  //   useDeleteHakAkses(kode)
-  // }
+  const handleSimpan = () => {
+    if (hakAkses !== "" && hakAkses.match(/[^0-9 ]/)) {
+      setHandleModal(true);
+    } else {
+    }
+  };
+
+  const handleSave = () => {
+    if (dataGet.some((row) => row.nama === hakAkses) === false) {
+      addHakAkses({ variables: { kode: kode, nama: hakAkses, status: hasil } });
+      //setOpen(false);
+      setHakAkses("");
+      setKode("");
+      refetch();
+      setOpenStatus(true);
+      setStatusTitle("Hak Akses baru berhasil disimpan");
+      setStatusType("success");
+    } else {
+      setOpenStatus(true);
+      setStatusTitle(`Hak Akses ${hakAkses} sudah terdaftar!`);
+      setStatusType("failed");
+    }
+  };
+
+  useEffect(() => {
+    setKode(
+      "0" + Math.floor(Number(dataGet[dataGet.length - 1].kode) + 1).toString()
+    );
+  });
+
+  function camelCase(str) {
+    // Using replace method with regEx
+    return str
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
+        return index == 0 ? word.toUpperCase() : word.toUpperCase();
+      })
+      .replace(/\s+/g, " ");
+  }
 
   return (
     <React.Fragment>
@@ -71,12 +114,14 @@ export default function UbahHakAkses() {
         >
           TAMBAH HAK AKSES
         </Typography>
-        
-        <DialogContent dividers sx={{ marginLeft: '5%', marginRight: "5%" }}>
+
+        <DialogContent dividers sx={{ marginLeft: "5%", marginRight: "5%" }}>
           <DialogContentText id="alert-dialog-description">
             <Grid container>
-              <Grid item xs={3} sx={{marginBottom: '4%'}}>
-                <DialogContentText sx={{ fontSize: "12", color: "black", paddingTop: "7%" }}>
+              <Grid item xs={3} sx={{ marginBottom: "4%" }}>
+                <DialogContentText
+                  sx={{ fontSize: "12", color: "black", paddingTop: "7%" }}
+                >
                   ID<span style={{ color: "red" }}>*</span>
                 </DialogContentText>
               </Grid>
@@ -88,20 +133,26 @@ export default function UbahHakAkses() {
                   }}
                   size="45"
                 ></input> */}
-                <TextField
+                {/* <TextField
                   name="kode"
                   variant="outlined"
                   size="small"
-                  value={kode}
+                  
                   onChange={(e) => {
                     setKode(e.target.value);
                   }}
                   sx={{
                     width: "100%",
                   }}
-                />
+                /> */}
+                <DialogContentText
+                  value={kode}
+                  sx={{ paddingTop: "2.7%", fontSize: "12", color: "black" }}
+                >
+                  {kode}
+                </DialogContentText>
               </Grid>
-              <Grid item xs={3} sx={{marginBottom: '1%'}}>
+              <Grid item xs={3} sx={{ marginBottom: "1%" }}>
                 <DialogContentText
                   sx={{ fontSize: "12", color: "black", paddingTop: "7%" }}
                 >
@@ -120,16 +171,17 @@ export default function UbahHakAkses() {
                   name="kode"
                   variant="outlined"
                   size="small"
-                  value={hakAkses}
                   onChange={(e) => {
-                    setHakAkses(e.target.value);
+                    setHakAkses(camelCase(e.target.value));
                   }}
+                  error={hakAkses === "" || hakAkses.match(/[^A-Za-z ]/)}
+                  helperText={hakAkses === "" && "Hak Akses tidak boleh kosong!" || hakAkses.match(/[^A-Za-z ]/) && "Hak Akses tidak boleh ada angka!"}
                   sx={{
                     width: "100%",
                   }}
                 />
               </Grid>
-              <Grid item xs={3} sx={{marginBottom: '5%'}}>
+              <Grid item xs={3} sx={{ marginBottom: "5%" }}>
                 {/* <text>Status</text> */}
                 <DialogContentText
                   sx={{ paddingTop: "14.5%", fontSize: "12", color: "black" }}
@@ -150,7 +202,7 @@ export default function UbahHakAkses() {
                   value={hasil}
                   sx={{ paddingTop: "5%", fontSize: "12", color: "black" }}
                 >
-                  Aktif
+                  {hasil}
                 </DialogContentText>
               </Grid>
             </Grid>
@@ -186,6 +238,45 @@ export default function UbahHakAkses() {
             </Grid>
           </DialogActions>
         </DialogContent>
+        <StatusModal
+          open={handleModal}
+          handleClose={() => setHandleModal(false)}
+          title={"Yakin ingin menambahkan Hak Akses baru?"}
+          status={"warning"}
+          actions={[
+            <ButtonCustom data={"YA"} onClick={handleSave} />,
+            <ButtonCustom
+              data={"KEMBALI"}
+              status={"cancel"}
+              onClick={() => setHandleModal(false)}
+            />,
+          ]}
+          description={
+            <Typography
+              id="modal-modal-title"
+              sx={{
+                margin: "10px 18px 36px 18px",
+                textAlign: "center",
+                fontSize: "15px",
+                fontWeight: 500,
+              }}
+            >
+              Pastikan data yang akan disimpan sudah benar
+            </Typography>
+          }
+        ></StatusModal>
+        <StatusModal
+          open={openStatus}
+          title={statusTitle}
+          status={statusType}
+          actions={[
+            <ButtonCustom
+              data={"OK"}
+              onClick={handleClose}
+              loading={loadingAdd}
+            />,
+          ]}
+        ></StatusModal>
       </Dialog>
     </React.Fragment>
   );

@@ -88,7 +88,7 @@ const HakAksesTable = () => {
                   {row.status}
                 </TableCell>
                 <TableCell align="center" sx={{ width: "10%" }}>
-                  <UbahHakAkses row={row} />
+                  <UbahHakAkses rows={rows} row={row} />
                 </TableCell>
               </TableRow>
             ))}

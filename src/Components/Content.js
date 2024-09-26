@@ -4,12 +4,16 @@ import MasterTable from "./MasterTable";
 import SearchIcon from "@mui/icons-material/Search";
 import TambahHakAkses from "../content/master/tambahhakakses";
 import HakAkses from "../content/master/hakakses";
+import MataUang from "../content/master/matauang";
 import { useLocation } from "react-router-dom";
 
 const RenderComponent = ({ indeks }) => {
   switch (indeks) {
     case "12":
       return <HakAkses />;
+      break;
+    case "40":
+      return <MataUang />;
       break;
 
     default:

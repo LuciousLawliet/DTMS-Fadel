@@ -14,7 +14,7 @@ export const GET_HAK_AKSES = gql`
 // Add data to server/database
 export const ADD_HAK_AKSES = gql`
   mutation TambahHakAkses($kode: String!, $nama: String!, $status: String!) {
-    addHakAksesByKode(hakAkses: { kode: $kode, nama: $nama, status: $status }) {
+    addHakAksesByKode(nama: $nama hakAkses: { kode: $kode, nama: $nama, status: $status }) {
       id
       kode
       nama

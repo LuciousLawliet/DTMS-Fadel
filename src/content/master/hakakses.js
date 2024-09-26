@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Box, Typography } from "@mui/material";
 import MasterTable from "../../Components/MasterTable";
 import SearchIcon from "@mui/icons-material/Search";
 import TambahHakAkses from "../master/tambahhakakses";
+import { useHakAkses } from "../../graphql/services/HakAkses";
 
 const HakAkses = () => {
+
+  //const { refetch } = useHakAkses()
+
+  const { data, loading, error, refetch } = useHakAkses()
+
+  if (loading) return "Loading";
+  if (error) return `Submission error! ${error.message}`;
+
+  const rows = data.getHakAksesByKode
+
+  // useEffect(() => {
+  //   refetch()
+  // })
   
   return (
     <Box
@@ -26,7 +40,7 @@ const HakAkses = () => {
         Master Hak Akses
       </Typography>
 
-      <TambahHakAkses />
+      <TambahHakAkses dataGet={rows}/>
 
       <SearchIcon sx={{ marginLeft: "93%", marginBottom: "1%" }}></SearchIcon>
       <MasterTable />
