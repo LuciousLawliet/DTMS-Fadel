@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Navbar from "../Components/Navbar";
 import Subnavbar from "../Components/Subnavbar";
 import Sidebar from "../Components/Sidebar";
@@ -6,6 +6,8 @@ import Content from "../Components/Content";
 import Footer from "../Components/Footer";
 import { Typography, Box, Grid } from "@mui/material";
 import { useGetNav } from "../graphql/services/Menu";
+import { AuthContext } from "../auth/AuthWrapper";
+import { useNavigate } from "react-router-dom";
 
 const Pengaturan = ({ menuItem, user }) => {
   const { data, loading, error } = useGetNav();
@@ -17,13 +19,12 @@ const Pengaturan = ({ menuItem, user }) => {
   if (loading) return "Loading";
   if (error) return `Submission error! ${error.message}`;
 
-  const nav = data.getNav;
-
+  const nav = data.getNavList;
+  console.log("pengaturan, ", user.nik);
   return (
     <div>
       <Navbar user={user} />
       <Subnavbar nav={nav} user={user} />
-      {/* <MenuHome /> */}
       <div
         style={{
           marginTop: 109,
@@ -106,16 +107,6 @@ const Pengaturan = ({ menuItem, user }) => {
           </Grid>
         </Grid>
       </div>
-      {/* <Box sx={{
-                position: 'fixed',
-                marginTop: '100px',
-            }}>
-                <Typography sx={{fontSize: 12, fontWeight: 500, marginTop: '7%', marginLeft: '1%'}}>
-                    {pathName}
-                </Typography>
-            </Box> */}
-      {/* <Sidebar menuItem={menuItem} isSelected={isSelected} setIsSelected={setIsSelected} setPathName={setPathName}/> */}
-      {/* <Content isSelected={isSelected} />  */}
       <Footer />
     </div>
   );

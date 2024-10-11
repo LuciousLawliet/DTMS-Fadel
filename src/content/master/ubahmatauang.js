@@ -170,10 +170,10 @@ const UbahMataUang = ({ rows, row }) => {
         },
       });
       //setOpen(false);
-      refetch();
       setOpenStatus(true);
       setStatusTitle("Mata Uang baru berhasil disimpan");
       setStatusType("success");
+      refetch();
     } else if (row.mata === mata) {
       editHakAkses({
         variables: {
@@ -188,14 +188,15 @@ const UbahMataUang = ({ rows, row }) => {
         },
       });
       //setOpen(false);
-      refetch();
       setOpenStatus(true);
       setStatusTitle("Mata Uang baru berhasil disimpan");
       setStatusType("success");
+      refetch();
     } else {
       setOpenStatus(true);
       setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
       setStatusType("failed");
+      refetch();
     }
   };
 

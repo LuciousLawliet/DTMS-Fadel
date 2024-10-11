@@ -29,8 +29,7 @@ export const ADD_MATA_UANG = gql`
     $status: String!
   ) {
     addMataUang(
-      mata: $mata
-      mataUang: {
+      addMataUangInput: {
         mata: $mata
         nama: $nama
         beli: $beli
@@ -41,7 +40,6 @@ export const ADD_MATA_UANG = gql`
         status: $status
       }
     ) {
-      id
       mata
       nama
       beli
@@ -67,8 +65,7 @@ export const EDIT_MATA_UANG = gql`
     $status: String!
   ) {
     editMataUang(
-      mata: $mata
-      edits: {
+      editMataUangInput: {
         mata: $mata
         nama: $nama
         beli: $beli
@@ -78,17 +75,7 @@ export const EDIT_MATA_UANG = gql`
         tanggal: $tanggal
         status: $status
       }
-    ) {
-      id
-      mata
-      nama
-      beli
-      jual
-      tengah
-      simbol
-      tanggal
-      status
-    }
+    )
   }
 `;
 

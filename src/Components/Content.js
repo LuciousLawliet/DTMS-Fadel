@@ -12,7 +12,7 @@ const RenderComponent = ({ indeks }) => {
     case "12":
       return <HakAkses />;
       break;
-    case "40":
+    case "41":
       return <MataUang />;
       break;
 

@@ -92,27 +92,28 @@ const MenuItem = ({
       const level = `${levelPrefix}-${index}`;
       //const isClicked = item.children && item.children.map((childMenu) => (childMenu.children && childMenu.children.some(son => son.id === isSelected)))
       const hasClickedChild =
-        item.children &&
-        item.children.some(
-          (child) =>
-            child.children &&
-            child.children.some((son) => son.id === isSelected)
+        item.child &&
+        item.child.some(
+          (childs) =>
+            childs.child &&
+            childs.child.some((son) => son.menu_id === isSelected)
         );
+        
       const isClicked =
-        item.children && item.children.some((child) => child.id === isSelected);
-
+        item.child && item.child.some((childs) => childs.menu_id === isSelected);
+      
       return (
         <Grid key={level} container direction="row" paddingLeft="20px">
           {/* <ListItemButton onClick={() => handleToggle(level)}>
             <ListItemText primary={item.name} />
           </ListItemButton> */}
-          {item.hasChildren === "TRUE" && item.path_menu && (
+          {item.hasChild === "TRUE" && item.path_menu && (
             <Grid item>
               <ArrowRightIcon
-                onClick={() => handleToggle(level, item.id, item.path_menu)}
+                onClick={() => handleToggle(level, item.menu_id, item.path_menu)}
                 sx={{
                   transform:
-                    isSelected === item.id || hasClickedChild || isClicked
+                    isSelected === item.menu_id || hasClickedChild || isClicked
                       ? "rotate(90deg)"
                       : "rotate(0deg)",
                   transition: "transform 0.3s ease",
@@ -121,13 +122,13 @@ const MenuItem = ({
             </Grid>
           )}
           <Grid item>
-            {item.hasChildren && (
+            {item.hasChild && (
               <Typography
-                onClick={() => handleToggle(level, item.id, item.path_menu)}
+                onClick={() => handleToggle(level, item.menu_id, item.path_menu)}
                 sx={{
                   fontSize: 15,
                   fontWeight:
-                    isSelected === item.id || hasClickedChild || isClicked
+                    isSelected === item.menu_id || hasClickedChild || isClicked
                       ? "700"
                       : "400",
                 }}
@@ -140,18 +141,18 @@ const MenuItem = ({
             container
             direction="row"
             sx={{
-              marginBottom: item.hasChildren === "TRUE" ? "0px" : "8px",
-              paddingLeft: item.hasChildren === "TRUE" ? "7px" : "0px",
-              paddingRight: item.hasChildren === "FALSE" ? "100px" : "0px"
+              marginBottom: item.hasChild === "TRUE" ? "0px" : "8px",
+              paddingLeft: item.hasChild === "TRUE" ? "7px" : "0px",
+              paddingRight: item.hasChild === "FALSE" ? "100px" : "0px",
             }}
           >
-            {item.children && item.children.length > 0 && (
+            {item.child && item.child.length > 0 && (
               <Collapse
-                in={isSelected === item.id || hasClickedChild || isClicked}
+                in={isSelected === item.menu_id || hasClickedChild || isClicked}
                 timeout="auto"
                 unmountOnExit
               >
-                <Typography>{renderMenuItems(item.children, level)}</Typography>
+                <Typography>{renderMenuItems(item.child, level)}</Typography>
               </Collapse>
             )}
           </Grid>

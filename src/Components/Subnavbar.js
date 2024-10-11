@@ -12,15 +12,19 @@ import { useNavigate, useLocation } from "react-router-dom";
 const Subnavbar = ({ nav, user }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("ini nav", nav);
+  //const user = users[0]
 
   const handleHomeNavigate = () => {
     navigate("/beranda");
+    window.location.reload();
   };
 
   const handleSubnavNavigate = (route) => {
     if (route.toLowerCase() !== location.pathname.substring(1)) {
       navigate(`/${route.toLowerCase()}`);
+      window.location.reload();
+    } else {
+      window.location.reload();
     }
   };
 

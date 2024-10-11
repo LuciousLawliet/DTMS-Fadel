@@ -1,27 +1,28 @@
-import React from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import './App.css';
-import HomeContainer from './containers/HomeContainer';
-import { PengaturanContainer } from './containers/PengaturanContainer';
-import { useGetUser } from './graphql/services/User';
+import React, { useContext } from "react";
+import "./App.css";
+import HomeContainer from "./containers/HomeContainer";
+import { Route, Routes, Navigate } from "react-router-dom";
+import { PengaturanContainer } from "./containers/PengaturanContainer";
+import Login from "./Pages/Login/Login";
+//import { useGetUser } from './graphql/services/User';
+import { AuthContext } from "./auth/AuthWrapper";
 
 export default function App() {
-  //const masuk = 1
-  const {data, loading, error} = useGetUser();
-  
-
-  if (loading) return "Loading"
-  if (error) return `Submission error! ${error.message}`
-
-  const user = data.getUser
+  const { authState } = useContext(AuthContext);
 
   return (
-    <Router>
-      <Routes>
-        <Route path='/Pengaturan' element={<PengaturanContainer user={user}/>} />
-        <Route path='/beranda' element={<HomeContainer />}/>
-        {/* {masuk === 1 ? useNavigate('/Pengaturan') : useNavigate('/Beranda')} */}
-      </Routes>
-    </Router>
+    <Routes>
+      {authState.token && authState.user ? (
+        <>
+          <Route path="/pengaturan" element={<PengaturanContainer />} />
+          <Route path="/beranda" element={<HomeContainer />} />
+        </>
+      ) : (
+        <>
+          <Route path="/login" element={<Login />} />
+        </>
+      )}
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
   );
 }

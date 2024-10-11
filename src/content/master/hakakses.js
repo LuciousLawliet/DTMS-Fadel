@@ -14,7 +14,7 @@ const HakAkses = () => {
   if (loading) return "Loading";
   if (error) return `Submission error! ${error.message}`;
 
-  const rows = data.getHakAksesByKode
+  const rows = data.getHakAkses
 
   // useEffect(() => {
   //   refetch()

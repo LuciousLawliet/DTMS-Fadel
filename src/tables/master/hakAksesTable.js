@@ -27,7 +27,8 @@ const HakAksesTable = () => {
   if (loading) return "Loading";
   if (error) return `Submission error! ${error.message}`;
 
-  const rows = data.getHakAksesByKode;
+  const rows = data.getHakAkses;
+  console.log("hakAkses, ", rows);
   const labelRowsPerPage = "Baris per halaman:";
   const labelDisplayedRows = ({ from, to, count }) => {
     return `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`

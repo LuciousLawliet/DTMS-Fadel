@@ -1,0 +1,20 @@
+.box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    /* background: linear-gradient(to right, #0555AE 38.9%, white 38.9%); */
+    background: linear-gradient(to right, #0555AE 50%, #F6F1F1 50%);
+}
+
+.img {
+    /* width: 220px; */
+    width: 300px;
+}
+
+.paper {
+    width: 981px;
+    height: 593px;
+    align-items: center;
+}

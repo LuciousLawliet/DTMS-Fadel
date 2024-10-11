@@ -1,13 +1,10 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import { Grid, Divider, Typography, TextField } from "@mui/material";
+import { Grid, Typography, TextField } from "@mui/material";
 import {
-  GET_HAK_AKSES,
   useAddHakAkses,
   useHakAkses,
 } from "../../graphql/services/HakAkses";
@@ -20,6 +17,7 @@ export default function TambahHakAkses({ dataGet }) {
   const [kode, setKode] = React.useState("");
   const [hakAkses, setHakAkses] = React.useState("");
   const [hasil, setHasil] = React.useState("Aktif");
+  const [salahHakAkses, setSalahHakAkses] = React.useState(true);
   const [handleModal, setHandleModal] = React.useState(false);
   const [openStatus, setOpenStatus] = React.useState(false);
   const [statusTitle, setStatusTitle] = React.useState("");
@@ -41,6 +39,8 @@ export default function TambahHakAkses({ dataGet }) {
   };
 
   const handleClose = () => {
+    setHakAkses("");
+    setSalahHakAkses(true);
     setOpen(false);
     setHandleModal(false);
     setOpenStatus(false);
@@ -51,6 +51,9 @@ export default function TambahHakAkses({ dataGet }) {
     if (hakAkses !== "" && hakAkses.match(/[^0-9 ]/)) {
       setHandleModal(true);
     } else {
+      if (hakAkses === "") {
+        setSalahHakAkses(false);
+      }
     }
   };
 
@@ -72,16 +75,29 @@ export default function TambahHakAkses({ dataGet }) {
   };
 
   useEffect(() => {
-    setKode(
-      "0" + Math.floor(Number(dataGet[dataGet.length - 1].kode) + 1).toString()
-    );
+    refetch()
+    if (!dataGet.length) {
+      setKode("001");
+    } else {
+      if (Number(dataGet[dataGet.length - 1].kode) < 10) {
+        setKode(
+          "00" +
+            Math.floor(Number(dataGet[dataGet.length - 1].kode) + 1).toString()
+        );
+      } else {
+        setKode(
+          "0" +
+            Math.floor(Number(dataGet[dataGet.length - 1].kode) + 1).toString()
+        );
+      }
+    }
   });
 
   function camelCase(str) {
     // Using replace method with regEx
     return str
       .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
-        return index == 0 ? word.toUpperCase() : word.toUpperCase();
+        return index === 0 ? word.toUpperCase() : word.toUpperCase();
       })
       .replace(/\s+/g, " ");
   }
@@ -173,9 +189,16 @@ export default function TambahHakAkses({ dataGet }) {
                   size="small"
                   onChange={(e) => {
                     setHakAkses(camelCase(e.target.value));
+                    if (hakAkses === "") {
+                      setSalahHakAkses(true)
+                    }
                   }}
-                  error={hakAkses === "" || hakAkses.match(/[^A-Za-z ]/)}
-                  helperText={hakAkses === "" && "Hak Akses tidak boleh kosong!" || hakAkses.match(/[^A-Za-z ]/) && "Hak Akses tidak boleh ada angka!"}
+                  error={hakAkses === " " || !salahHakAkses || hakAkses.match(/[^A-Za-z ]/)}
+                  helperText={
+                    (hakAkses === " " || !salahHakAkses && "Hak Akses tidak boleh kosong!") ||
+                    (hakAkses.match(/[^A-Za-z ]/) &&
+                      "Hak Akses tidak boleh ada angka!")
+                  }
                   sx={{
                     width: "100%",
                   }}

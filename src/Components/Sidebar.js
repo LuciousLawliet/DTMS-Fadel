@@ -55,7 +55,6 @@ const Sidebar = ({ menuItem, isSelected, setIsSelected, setPathName }) => {
   //if (loading) return "Loading";
   //if (error) return `Submission error! ${error.message}`;
   //const rows = data.getMenu;
-  
 
   return (
     <Box

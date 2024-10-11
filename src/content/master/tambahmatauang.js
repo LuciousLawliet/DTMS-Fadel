@@ -1,16 +1,12 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
   Grid,
-  Divider,
   Typography,
   TextField,
-  FormHelperText,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
 import {
   GET_MATA_UANG,
@@ -28,12 +24,16 @@ export default function TambahMataUang({ dataGet }) {
   const [jual, setJual] = React.useState("");
   const [tengah, setTengah] = React.useState("0");
   const [simbol, setSimbol] = React.useState("");
-  const [kesalahan, setKesalahan] = React.useState(false);
+  const [salahMata, setSalahMata] = React.useState(true);
+  const [salahNama, setSalahNama] = React.useState(true);
+  const [salahBeli, setSalahBeli] = React.useState(true);
+  const [salahJual, setSalahJual] = React.useState(true);
+  const [salahsimbol, setSalahSimbol] = React.useState(true);
   const [status, setStatus] = React.useState("Aktif");
   const [handleModal, setHandleModal] = React.useState(false);
   const [openStatus, setOpenStatus] = React.useState(false);
-  const [statusTitle, setStatusTitle] = React.useState('')
-  const [statusType, setStatusType] = React.useState('');
+  const [statusTitle, setStatusTitle] = React.useState("");
+  const [statusType, setStatusType] = React.useState("");
   const current = new Date();
   const tanggal = `${("0" + current.getDate()).slice(-2)}/${(
     "0" +
@@ -66,6 +66,11 @@ export default function TambahMataUang({ dataGet }) {
     setTengah("");
     setNama("");
     setSimbol("");
+    setSalahMata(true);
+    setSalahNama(true);
+    setSalahBeli(true);
+    setSalahJual(true);
+    setSalahSimbol(true);
     setOpen(false);
     setHandleModal(false);
     setOpenStatus(false);
@@ -95,14 +100,13 @@ export default function TambahMataUang({ dataGet }) {
       setSimbol("");
       refetch();
       setOpenStatus(true);
-      setStatusTitle('Mata Uang baru berhasil disimpan');
-      setStatusType('success');
+      setStatusTitle("Mata Uang baru berhasil disimpan");
+      setStatusType("success");
     } else {
       setOpenStatus(true);
       setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
-      setStatusType('failed');
+      setStatusType("failed");
     }
-    
   };
 
   const handleKursTengah = (pertama, kedua) => {
@@ -115,7 +119,6 @@ export default function TambahMataUang({ dataGet }) {
   };
 
   const handleSimpan = () => {
-    
     if (
       mata !== "" &&
       mata.length === 3 &&
@@ -139,33 +142,29 @@ export default function TambahMataUang({ dataGet }) {
       let coba = handleKursTengah(beli, jual);
       setTengah(coba);
       setHandleModal(true);
-    } else {
+    }
+    
+    if (mata === "") {
+      setSalahMata(false);
+    }
+    if (nama === "") {
+      setSalahNama(false);
+    }
+    if (beli === "") {
+      setSalahBeli(false);
+    }
+    if (jual === "") {
+      setSalahJual(false);
+    }
+    if (simbol === "") {
+      setSalahSimbol(false);
     }
   };
 
   return (
     <React.Fragment>
-      {/* <Button
-        sx={{
-          width: "120px",
-          marginRight: "92%",
-        }}
-        variant="contained"
-        color="success"
-        onClick={handleClickOpen}
-      >
-        + TAMBAH
-      </Button> */}
       <ButtonCustom data={"Tambah"} status={"add"} onClick={handleClickOpen} />
-      <Dialog
-        fullWidth
-        maxWidth="sm"
-        open={open}
-        onClose={handleClose}
-        // aria-labelledby="alert-dialog-title"
-        // aria-describedby="alert-dialog-description"
-      >
-        {/* <DialogTitle id="alert-dialog-title">{"TAMBAH HAK AKSES"}</DialogTitle> */}
+      <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
         <Typography
           sx={{ paddingLeft: "5%", paddingTop: "4%", fontSize: "25px" }}
         >
@@ -190,17 +189,21 @@ export default function TambahMataUang({ dataGet }) {
                   value={mata}
                   onChange={(e) => {
                     setMata(e.target.value.toUpperCase());
+                    if (mata === "") {
+                      setSalahMata(true)
+                    }
                   }}
                   error={
-                    mata === "" ||
-                    mata.length < 3 ||
-                    mata.length > 3 ||
+                    mata === " " ||
+                    !salahMata ||
+                    (mata.length < 3 && mata.length != 0) ||
+                    (mata.length > 3 && mata.length != 0) ||
                     mata.match(/[^A-Z]/)
                   }
                   helperText={
-                    mata === ""
+                    mata === " " || !salahMata
                       ? "Mata Uang tidak boleh kosong!"
-                      : (mata.length < 3 || mata.length > 3
+                      : ((mata.length < 3 && mata.length != 0) || (mata.length > 3 && mata.length != 0)
                           ? "Harus tiga karakter!"
                           : "") ||
                         (mata.match(/[^A-Z]/) && "Tidak boleh angka")
@@ -225,11 +228,14 @@ export default function TambahMataUang({ dataGet }) {
                   size="small"
                   value={nama}
                   onChange={(e) => {
-                    setNama(e.target.value.toUpperCase());
+                    setNama(e.target.value.toUpperCase())
+                    if (nama === "") {
+                      setSalahNama(true)
+                    };
                   }}
-                  error={nama === "" || nama.match(/[^A-Z ]/)}
+                  error={nama === " " || !salahNama || nama.match(/[^A-Z ]/)}
                   helperText={
-                    nama === ""
+                    nama === " " || !salahNama
                       ? "Nama Mata Uang tidak boleh kosong!"
                       : nama.match(/[^A-Z ]/) && "Masukkan dengan benar!"
                   }
@@ -254,10 +260,13 @@ export default function TambahMataUang({ dataGet }) {
                     setBeli(
                       e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     );
+                    if (beli === "") {
+                      setSalahBeli(true)
+                    };
                   }}
-                  error={beli === "" || beli.match(/[^0-9.,]/)}
+                  error={beli === " " || !salahBeli || beli.match(/[^0-9.,]/)}
                   helperText={
-                    beli === ""
+                    beli === " " || !salahBeli
                       ? "Kurs Beli tidak boleh kosong!"
                       : beli.match(/[^0-9,.]/) && "Harus angka!"
                   }
@@ -283,10 +292,13 @@ export default function TambahMataUang({ dataGet }) {
                     setJual(
                       e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                     );
+                    if (jual === "") {
+                      setSalahJual(true)
+                    }
                   }}
-                  error={jual === "" || jual.match(/[^0-9.,]/)}
+                  error={jual === " " || !salahJual || jual.match(/[^0-9.,]/)}
                   helperText={
-                    jual === ""
+                    jual === " " || !salahJual
                       ? "Kurs Jual tidak boleh kosong!"
                       : jual.match(/[^0-9.,]/) && "Harus angka!"
                   }
@@ -330,11 +342,14 @@ export default function TambahMataUang({ dataGet }) {
                   value={simbol}
                   onChange={(e) => {
                     setSimbol(e.target.value);
+                    if (simbol === "") {
+                      setSalahSimbol(true)
+                    }
                     //setTengah(handleKursTengah(jual, beli));
                   }}
-                  error={simbol === "" || simbol.length > 1}
+                  error={simbol === " " || !salahsimbol || simbol.length > 1}
                   helperText={
-                    simbol === ""
+                    simbol === " " || !salahsimbol
                       ? "Simbol mata uang tidak boleh kosong!"
                       : simbol.length > 1 && "Maksimal satu karakter!"
                   }
@@ -388,11 +403,7 @@ export default function TambahMataUang({ dataGet }) {
               marginBottom="5%"
             >
               <Grid item>
-                <ButtonCustom
-                  data={"SIMPAN"}
-                  onClick={handleSimpan}
-                  
-                />
+                <ButtonCustom data={"SIMPAN"} onClick={handleSimpan} />
               </Grid>
               <Grid item>
                 <ButtonCustom
@@ -415,6 +426,7 @@ export default function TambahMataUang({ dataGet }) {
               data={"KEMBALI"}
               status={"cancel"}
               onClick={() => setHandleModal(false)}
+              loading={loadingAdd}
             />,
           ]}
           description={

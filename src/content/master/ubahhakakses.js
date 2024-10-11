@@ -245,7 +245,7 @@ const UbahHakAkses = ({ rows, row }) => {
         <StatusModal
           open={handleModal}
           handleClose={() => setHandleModal(false)}
-          title={`Yakin ingin mengubah Hak Akses ${hakAkses}?`}
+          title={`Yakin ingin mengubah Hak Akses?`}
           status={"warning"}
           actions={[
             <ButtonCustom data={"YA"} onClick={handleSave} />,
