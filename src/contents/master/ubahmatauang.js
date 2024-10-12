@@ -1,8 +1,11 @@
-import * as React from "react";
+import { useEffect, useState, Fragment } from "react";
 import {
   Grid,
-  Typography,
+  FormControl,
   TextField,
+  MenuItem,
+  Select,
+  Typography,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,104 +13,107 @@ import {
 } from "@mui/material";
 import {
   GET_MATA_UANG,
-  useAddMataUang,
   useMataUang,
-} from "../../graphql/services/MataUang";
-import { ButtonCustom } from "../../Components/Button";
-import { StatusModal } from "../../Components/Modal";
+  useEditMataUang,
+} from "../../graphql/services/MataUang.js";
+import { ButtonCustom, ButtonAction } from "../../components/Button.js";
+import { StatusModal } from "../../components/Modal.js";
 
-export default function TambahMataUang({ dataGet }) {
-  const [open, setOpen] = React.useState(false);
-  const [mata, setMata] = React.useState("");
-  const [nama, setNama] = React.useState("");
-  const [beli, setBeli] = React.useState("");
-  const [jual, setJual] = React.useState("");
-  const [tengah, setTengah] = React.useState("0");
-  const [simbol, setSimbol] = React.useState("");
-  const [salahMata, setSalahMata] = React.useState(true);
-  const [salahNama, setSalahNama] = React.useState(true);
-  const [salahBeli, setSalahBeli] = React.useState(true);
-  const [salahJual, setSalahJual] = React.useState(true);
-  const [salahsimbol, setSalahSimbol] = React.useState(true);
-  const [status, setStatus] = React.useState("Aktif");
-  const [handleModal, setHandleModal] = React.useState(false);
-  const [openStatus, setOpenStatus] = React.useState(false);
-  const [statusTitle, setStatusTitle] = React.useState("");
-  const [statusType, setStatusType] = React.useState("");
+const UbahMataUang = ({ rows, row }) => {
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  // const [formData, setFormData] = useState({
+  //   mata: "",
+  //   nama: "",
+  //   beli: "",
+  //   jual: "",
+  //   tengah: "",
+  //   simbol: "",
+  //   status: "",
+  // });
+  const [mata, setMata] = useState("");
+  const [nama, setNama] = useState("");
+  const [beli, setBeli] = useState("");
+  const [jual, setJual] = useState("");
+  const [tengah, setTengah] = useState("");
+  const [simbol, setSimbol] = useState("");
+  const [status, setStatus] = useState("");
+  const [editMataUang, { loading }] = useEditMataUang();
+  const [handleModal, setHandleModal] = useState(false);
+  const [openStatus, setOpenStatus] = useState(false);
+  const [statusTitle, setStatusTitle] = useState("");
+  const [statusType, setStatusType] = useState("");
   const current = new Date();
   const tanggal = `${("0" + current.getDate()).slice(-2)}/${(
     "0" +
     (current.getMonth() + 1)
   ).slice(-2)}/${current.getFullYear()}`;
-  const { data, loading, error } = useMataUang();
-  const [addMataUang, { loadingAdd }] = useAddMataUang();
   const { refetch } = useMataUang({
     refetchQueries: [{ query: GET_MATA_UANG }],
   });
 
-  //const formatedNumber = this.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-
-  if (loading) return "Submitting...";
-  if (error) return `Submission error! ${error.message}`;
-  // const useHandleDelete = () => {
-  //   useDeleteHakAkses(kode)
-  // }
-
-  const rows = data.getMataUang;
-
   const handleClickOpen = () => {
     setOpen(true);
+    setSelectedRow(row);
   };
 
   const handleClose = () => {
-    setBeli("");
-    setMata("");
-    setJual("");
-    setTengah("");
-    setNama("");
-    setSimbol("");
-    setSalahMata(true);
-    setSalahNama(true);
-    setSalahBeli(true);
-    setSalahJual(true);
-    setSalahSimbol(true);
-    setOpen(false);
+    setSelectedRow(null);
     setHandleModal(false);
+    setOpen(false);
     setOpenStatus(false);
     refetch();
   };
 
-  const handleSave = () => {
-    if (rows.some((row) => row.mata === mata) === false) {
-      addMataUang({
-        variables: {
-          mata: mata,
-          nama: nama,
-          beli: beli,
-          jual: jual,
-          tengah: tengah,
-          simbol: simbol,
-          tanggal: tanggal,
-          status: status,
-        },
-      });
-      //setOpen(false);
-      setBeli("");
-      setMata("");
-      setJual("");
-      setTengah("");
-      setNama("");
-      setSimbol("");
-      refetch();
-      setOpenStatus(true);
-      setStatusTitle("Mata Uang baru berhasil disimpan");
-      setStatusType("success");
-    } else {
-      setOpenStatus(true);
-      setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
-      setStatusType("failed");
+  // Mengatasi perubahan komponen-komponen
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
+
+  // Mengatasi perubahan komponen, hanya select
+  // const handleFieldChange = (e) => {
+  //   setFormData({
+  //     mata: mata,
+  //     nama: nama,
+  //     beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+  //     jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+  //     tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+  //     simbol: simbol,
+  //     status: e.target.value,
+  //   });
+  //   setMata(mata)
+  //   setNama(nama)
+  //   setBeli(beli)
+  //   setJual(jual)
+  //   setTengah(tengah)
+  //   setSimbol(simbol)
+  //   setStatus(e.target.value);
+  // };
+
+  useEffect(() => {
+    if (selectedRow) {
+      // setFormData({
+      //   mata: selectedRow.mata,
+      //   nama: selectedRow.nama,
+      //   beli: selectedRow.beli,
+      //   jual: selectedRow.jual,
+      //   tengah: selectedRow.tengah,
+      //   simbol: selectedRow.simbol,
+      //   status: selectedRow.status,
+      // });
+      setMata(selectedRow.mata);
+      setNama(selectedRow.nama);
+      setBeli(selectedRow.beli);
+      setJual(selectedRow.jual);
+      setTengah(selectedRow.tengah);
+      setSimbol(selectedRow.simbol);
+      setStatus(selectedRow.status);
     }
-  };
+  }, [selectedRow]);
 
   const handleKursTengah = (pertama, kedua) => {
     var hasil =
@@ -123,58 +129,81 @@ export default function TambahMataUang({ dataGet }) {
       mata !== "" &&
       mata.length === 3 &&
       mata.match(/[^0-9]/) &&
-      //rows.some((row) => row.mata === mata) === false &&
       nama !== "" &&
       nama.match(/[^0-9 ]/) &&
-      //rows.some((row) => row.nama === nama) === false &&
       beli !== "" &&
       beli.match(/[^A-Za-z]/) &&
-      //rows.some((row) => row.beli === beli) === false &&
       jual !== "" &&
       jual.match(/[^A-Za-z]/) &&
-      //rows.some((row) => row.jual === jual) === false &&
-      //tengah !== "" &&
       simbol !== "" &&
       simbol.length === 1 &&
       tanggal !== "" &&
       status !== ""
     ) {
-      let coba = handleKursTengah(beli, jual);
+      let coba = handleKursTengah(beli, beli);
       setTengah(coba);
       setHandleModal(true);
     }
-    
-    if (mata === "") {
-      setSalahMata(false);
-    }
-    if (nama === "") {
-      setSalahNama(false);
-    }
-    if (beli === "") {
-      setSalahBeli(false);
-    }
-    if (jual === "") {
-      setSalahJual(false);
-    }
-    if (simbol === "") {
-      setSalahSimbol(false);
+  };
+
+  const handleSave = () => {
+    if (rows.some((row) => row.mata === mata) === false) {
+      editMataUang({
+        variables: {
+          mata: mata,
+          nama: nama,
+          beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          simbol: simbol,
+          tanggal: tanggal,
+          status: status,
+        },
+      });
+      //setOpen(false);
+      setOpenStatus(true);
+      setStatusTitle("Mata Uang baru berhasil disimpan");
+      setStatusType("success");
+      refetch();
+    } else if (row.mata === mata) {
+      editMataUang({
+        variables: {
+          mata: mata,
+          nama: nama,
+          beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+          simbol: simbol,
+          tanggal: tanggal,
+          status: status,
+        },
+      });
+      //setOpen(false);
+      setOpenStatus(true);
+      setStatusTitle("Mata Uang baru berhasil disimpan");
+      setStatusType("success");
+      refetch();
+    } else {
+      setOpenStatus(true);
+      setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
+      setStatusType("failed");
+      refetch();
     }
   };
 
   return (
-    <React.Fragment>
-      <ButtonCustom data={"Tambah"} status={"add"} onClick={handleClickOpen} />
+    <Fragment>
+      <ButtonAction type={"edit"} onClick={handleClickOpen} />
       <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
         <Typography
           sx={{ paddingLeft: "5%", paddingTop: "4%", fontSize: "25px" }}
         >
-          TAMBAH MATA UANG
+          UBAH MATA UANG
         </Typography>
-
         <DialogContent dividers sx={{ marginLeft: "5%", marginRight: "5%" }}>
           <DialogContentText id="alert-dialog-description">
             <Grid container>
-              <Grid item xs={4} sx={{ marginBottom: "4%" }}>
+              <Grid item xs={4} sx={{ marginBottom: "3%" }}>
                 <DialogContentText
                   sx={{ fontSize: "12", color: "black", paddingTop: "7%" }}
                 >
@@ -182,37 +211,16 @@ export default function TambahMataUang({ dataGet }) {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <TextField
-                  name="mata"
-                  variant="outlined"
-                  size="small"
-                  value={mata}
-                  onChange={(e) => {
-                    setMata(e.target.value.toUpperCase());
-                    if (mata === "") {
-                      setSalahMata(true)
-                    }
-                  }}
-                  error={
-                    mata === " " ||
-                    !salahMata ||
-                    (mata.length < 3 && mata.length != 0) ||
-                    (mata.length > 3 && mata.length != 0) ||
-                    mata.match(/[^A-Z]/)
-                  }
-                  helperText={
-                    mata === " " || !salahMata
-                      ? "Mata Uang tidak boleh kosong!"
-                      : ((mata.length < 3 && mata.length != 0) || (mata.length > 3 && mata.length != 0)
-                          ? "Harus tiga karakter!"
-                          : "") ||
-                        (mata.match(/[^A-Z]/) && "Tidak boleh angka")
-                  }
-                  inputProps={{ inputMode: "text" }}
+                <DialogContentText
                   sx={{
-                    width: "100%",
+                    color: "black",
+                    fontSize: "12",
+                    fontWeight: 600,
+                    paddingTop: "3.6%",
                   }}
-                />
+                >
+                  {mata}
+                </DialogContentText>
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -222,27 +230,16 @@ export default function TambahMataUang({ dataGet }) {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <TextField
-                  name="nama"
-                  variant="outlined"
-                  size="small"
-                  value={nama}
-                  onChange={(e) => {
-                    setNama(e.target.value.toUpperCase())
-                    if (nama === "") {
-                      setSalahNama(true)
-                    };
-                  }}
-                  error={nama === " " || !salahNama || nama.match(/[^A-Z ]/)}
-                  helperText={
-                    nama === " " || !salahNama
-                      ? "Nama Mata Uang tidak boleh kosong!"
-                      : nama.match(/[^A-Z ]/) && "Masukkan dengan benar!"
-                  }
+                <DialogContentText
                   sx={{
-                    width: "100%",
+                    color: "black",
+                    fontSize: "12",
+                    fontWeight: 600,
+                    paddingTop: "3.6%",
                   }}
-                />
+                >
+                  {nama}
+                </DialogContentText>
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -254,19 +251,15 @@ export default function TambahMataUang({ dataGet }) {
               <Grid item xs={8}>
                 <TextField
                   name="beli"
+                  value={beli}
                   variant="outlined"
                   size="small"
                   onChange={(e) => {
-                    setBeli(
-                      e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    );
-                    if (beli === "") {
-                      setSalahBeli(true)
-                    };
+                    setBeli(e.target.value);
                   }}
-                  error={beli === " " || !salahBeli || beli.match(/[^0-9.,]/)}
+                  error={beli === "" || beli.match(/[^0-9.,]/)}
                   helperText={
-                    beli === " " || !salahBeli
+                    beli === ""
                       ? "Kurs Beli tidak boleh kosong!"
                       : beli.match(/[^0-9,.]/) && "Harus angka!"
                   }
@@ -274,7 +267,6 @@ export default function TambahMataUang({ dataGet }) {
                     width: "100%",
                   }}
                 />
-                {console.log(beli)}
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -286,19 +278,15 @@ export default function TambahMataUang({ dataGet }) {
               <Grid item xs={8}>
                 <TextField
                   name="jual"
+                  value={jual}
                   variant="outlined"
                   size="small"
                   onChange={(e) => {
-                    setJual(
-                      e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    );
-                    if (jual === "") {
-                      setSalahJual(true)
-                    }
+                    setJual(e.target.value);
                   }}
-                  error={jual === " " || !salahJual || jual.match(/[^0-9.,]/)}
+                  error={jual === "" || jual.match(/[^0-9.,]/)}
                   helperText={
-                    jual === " " || !salahJual
+                    jual === ""
                       ? "Kurs Jual tidak boleh kosong!"
                       : jual.match(/[^0-9.,]/) && "Harus angka!"
                   }
@@ -335,28 +323,16 @@ export default function TambahMataUang({ dataGet }) {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <TextField
-                  name="simbol"
-                  variant="outlined"
-                  size="small"
-                  value={simbol}
-                  onChange={(e) => {
-                    setSimbol(e.target.value);
-                    if (simbol === "") {
-                      setSalahSimbol(true)
-                    }
-                    //setTengah(handleKursTengah(jual, beli));
-                  }}
-                  error={simbol === " " || !salahsimbol || simbol.length > 1}
-                  helperText={
-                    simbol === " " || !salahsimbol
-                      ? "Simbol mata uang tidak boleh kosong!"
-                      : simbol.length > 1 && "Maksimal satu karakter!"
-                  }
+                <DialogContentText
                   sx={{
-                    width: "100%",
+                    color: "black",
+                    fontSize: "12",
+                    fontWeight: 600,
+                    paddingTop: "2.5%",
                   }}
-                />
+                >
+                  {simbol}
+                </DialogContentText>
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "2%" }}>
                 <DialogContentText
@@ -386,12 +362,23 @@ export default function TambahMataUang({ dataGet }) {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <DialogContentText
-                  value={status}
-                  sx={{ paddingTop: "5.5%", fontSize: "12", color: "black" }}
+                <FormControl
+                  sx={{
+                    width: "100%",
+                    marginTop: "1%",
+                  }}
+                  size="small"
                 >
-                  Aktif
-                </DialogContentText>
+                  <Select
+                    value={status}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                    }}
+                  >
+                    <MenuItem value={"Aktif"}>Aktif</MenuItem>
+                    <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
             </Grid>
           </DialogContentText>
@@ -418,7 +405,7 @@ export default function TambahMataUang({ dataGet }) {
         <StatusModal
           open={handleModal}
           handleClose={() => setHandleModal(false)}
-          title={"Yakin ingin menambahkan Mata Uang baru?"}
+          title={`Yakin ingin mengubah Mata Uang ${mata}?`}
           status={"warning"}
           actions={[
             <ButtonCustom data={"YA"} onClick={handleSave} />,
@@ -426,7 +413,6 @@ export default function TambahMataUang({ dataGet }) {
               data={"KEMBALI"}
               status={"cancel"}
               onClick={() => setHandleModal(false)}
-              loading={loadingAdd}
             />,
           ]}
           description={
@@ -451,11 +437,13 @@ export default function TambahMataUang({ dataGet }) {
             <ButtonCustom
               data={"OK"}
               onClick={handleClose}
-              loading={loadingAdd}
+              loading={loading}
             />,
           ]}
         ></StatusModal>
       </Dialog>
-    </React.Fragment>
+    </Fragment>
   );
-}
+};
+
+export default UbahMataUang;

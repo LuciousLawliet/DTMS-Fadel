@@ -1,11 +1,10 @@
 import React, { useContext } from "react";
 import "./App.css";
-import HomeContainer from "./containers/HomeContainer";
+import HomeContainer from "./containers/HomeContainer.js";
 import { Route, Routes, Navigate } from "react-router-dom";
-import { PengaturanContainer } from "./containers/PengaturanContainer";
-import Login from "./Pages/Login/Login";
-//import { useGetUser } from './graphql/services/User';
-import { AuthContext } from "./auth/AuthWrapper";
+import { PengaturanContainer } from "./containers/PengaturanContainer.js";
+import Login from "./pages/Login/Login.js";
+import { AuthContext } from "./auth/AuthWrapper.js";
 
 export default function App() {
   const { authState } = useContext(AuthContext);

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { ButtonCustom } from "./Button";
+import { ButtonCustom } from "./Button.js";
 import { TextField, Grid, Typography, Alert } from "@mui/material";
 import { useMutation } from "@apollo/client";
-import { AuthContext } from "../auth/AuthWrapper";
-import { LOGIN } from "../graphql/services/auth";
+import { AuthContext } from "../auth/AuthWrapper.js";
+import { LOGIN } from "../graphql/services/auth.js";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -43,6 +43,8 @@ const LoginForm = () => {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      handleSubmit(e);
+    } else if (e.key === "Alt") {
       handleSubmit(e);
     }
   };

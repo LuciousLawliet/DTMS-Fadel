@@ -1,44 +1,35 @@
 import * as React from "react";
-import { useEffect } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import EditIcon from "@mui/icons-material/Edit";
-import { Grid, Menu, MenuItem, Select, Typography } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import NativeSelect from "@mui/material/NativeSelect";
+import {
+  Grid,
+  Typography,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from "@mui/material";
 import {
   GET_MATA_UANG,
+  useAddMataUang,
   useMataUang,
-  useEditMataUang,
-} from "../../graphql/services/MataUang";
-import { ButtonCustom } from "../../Components/Button";
-import { StatusModal } from "../../Components/Modal";
+} from "../../graphql/services/MataUang.js";
+import { ButtonCustom } from "../../components/Button.js";
+import { StatusModal } from "../../components/Modal.js";
 
-const UbahMataUang = ({ rows, row }) => {
+export default function TambahMataUang({ dataGet }) {
   const [open, setOpen] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  const [formData, setFormData] = React.useState({
-    mata: "",
-    nama: "",
-    beli: "",
-    jual: "",
-    tengah: "",
-    simbol: "",
-    status: "",
-  });
   const [mata, setMata] = React.useState("");
   const [nama, setNama] = React.useState("");
   const [beli, setBeli] = React.useState("");
   const [jual, setJual] = React.useState("");
-  const [tengah, setTengah] = React.useState("");
+  const [tengah, setTengah] = React.useState("0");
   const [simbol, setSimbol] = React.useState("");
-  const [status, setStatus] = React.useState("");
-  const [editHakAkses, { loading, error }] = useEditMataUang();
+  const [salahMata, setSalahMata] = React.useState(true);
+  const [salahNama, setSalahNama] = React.useState(true);
+  const [salahBeli, setSalahBeli] = React.useState(true);
+  const [salahJual, setSalahJual] = React.useState(true);
+  const [salahsimbol, setSalahSimbol] = React.useState(true);
+  const status = "Aktif";
   const [handleModal, setHandleModal] = React.useState(false);
   const [openStatus, setOpenStatus] = React.useState(false);
   const [statusTitle, setStatusTitle] = React.useState("");
@@ -48,76 +39,102 @@ const UbahMataUang = ({ rows, row }) => {
     "0" +
     (current.getMonth() + 1)
   ).slice(-2)}/${current.getFullYear()}`;
+  const [addMataUang, { loadingAdd }] = useAddMataUang();
   const { refetch } = useMataUang({
     refetchQueries: [{ query: GET_MATA_UANG }],
   });
 
   const handleClickOpen = () => {
     setOpen(true);
-    setSelectedRow(row);
   };
 
   const handleClose = () => {
-    setSelectedRow(null);
-    setHandleModal(false);
+    setBeli("");
+    setMata("");
+    setJual("");
+    setTengah("");
+    setNama("");
+    setSimbol("");
+    setSalahMata(true);
+    setSalahNama(true);
+    setSalahBeli(true);
+    setSalahJual(true);
+    setSalahSimbol(true);
     setOpen(false);
+    setHandleModal(false);
     setOpenStatus(false);
     refetch();
   };
 
-  // Mengatasi perubahan komponen-komponen
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const handleSimpan = () => {
+    if (
+      mata !== "" &&
+      mata.length === 3 &&
+      mata.match(/[^0-9]/) &&
+      nama !== "" &&
+      nama.match(/[^0-9 ]/) &&
+      beli !== "" &&
+      beli.match(/[^A-Za-z]/) &&
+      jual !== "" &&
+      jual.match(/[^A-Za-z]/) &&            
+      simbol !== "" &&
+      simbol.length === 1 &&
+      tanggal !== "" &&
+      status !== ""
+    ) {
+      let coba = handleKursTengah(beli, jual);
+      setTengah(coba);
+      setHandleModal(true);
+    }
+
+    if (mata === "") {
+      setSalahMata(false);
+    }
+    if (nama === "") {
+      setSalahNama(false);
+    }
+    if (beli === "") {
+      setSalahBeli(false);
+    }
+    if (jual === "") {
+      setSalahJual(false);
+    }
+    if (simbol === "") {
+      setSalahSimbol(false);
+    }
   };
 
-  // Mengatasi perubahan komponen, hanya select
-  const handleFieldChange = (e) => {
-    // setFormData({
-    //   mata: mata,
-    //   nama: nama,
-    //   beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-    //   jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-    //   tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-    //   simbol: simbol,
-    //   status: e.target.value,
-    // });
-    // setMata(mata)
-    // setNama(nama)
-    // setBeli(beli)
-    // setJual(jual)
-    // setTengah(tengah)
-    // setSimbol(simbol)
-    setStatus(e.target.value);
+  const handleSave = () => {
+    if (dataGet.some((row) => row.mata === mata) === false) {
+      addMataUang({
+        variables: {
+          mata: mata,
+          nama: nama,
+          beli: beli,
+          jual: jual,
+          tengah: tengah,
+          simbol: simbol,
+          tanggal: tanggal,
+          status: status,
+        },
+      });
+      //setOpen(false);
+      setBeli("");
+      setMata("");
+      setJual("");
+      setTengah("");
+      setNama("");
+      setSimbol("");
+      refetch();
+      setOpenStatus(true);
+      setStatusTitle("Mata Uang baru berhasil disimpan");
+      setStatusType("success");
+    } else {
+      setOpenStatus(true);
+      setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
+      setStatusType("failed");
+    }
   };
-
-  useEffect(
-    () => {
-      if (selectedRow) {
-        // setFormData({
-        //   mata: selectedRow.mata,
-        //   nama: selectedRow.nama,
-        //   beli: selectedRow.beli,
-        //   jual: selectedRow.jual,
-        //   tengah: selectedRow.tengah,
-        //   simbol: selectedRow.simbol,
-        //   status: selectedRow.status,
-        // });
-        setMata(selectedRow.mata);
-        setNama(selectedRow.nama);
-        setBeli(selectedRow.beli);
-        setJual(selectedRow.jual);
-        setTengah(selectedRow.tengah);
-        setSimbol(selectedRow.simbol);
-        setStatus(selectedRow.status);
-      }
-    },
-    [selectedRow]
-    //console.log(formData.kode, formData.nama, formData.status)
-  );
 
   const handleKursTengah = (pertama, kedua) => {
     var hasil =
@@ -128,95 +145,20 @@ const UbahMataUang = ({ rows, row }) => {
     return hasil;
   };
 
-  const handleSimpan = () => {
-    if (
-      mata !== "" &&
-      mata.length === 3 &&
-      mata.match(/[^0-9]/) &&
-      //rows.some((row) => row.mata === mata) === false &&
-      nama !== "" &&
-      nama.match(/[^0-9 ]/) &&
-      //rows.some((row) => row.nama === nama) === false &&
-      beli !== "" &&
-      beli.match(/[^A-Za-z]/) &&
-      //rows.some((row) => row.beli === beli) === false &&
-      jual !== "" &&
-      jual.match(/[^A-Za-z]/) &&
-      //rows.some((row) => row.jual === jual) === false &&
-      //tengah !== "" &&
-      simbol !== "" &&
-      simbol.length === 1 &&
-      tanggal !== "" &&
-      status !== ""
-    ) {
-      let coba = handleKursTengah(beli, beli);
-      setTengah(coba);
-      setHandleModal(true);
-    }
-  };
-
-  const handleSave = () => {
-    if (rows.some((row) => row.mata === mata) === false) {
-      editHakAkses({
-        variables: {
-          mata: mata,
-          nama: nama,
-          beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          simbol: simbol,
-          tanggal: tanggal,
-          status: status,
-        },
-      });
-      //setOpen(false);
-      setOpenStatus(true);
-      setStatusTitle("Mata Uang baru berhasil disimpan");
-      setStatusType("success");
-      refetch();
-    } else if (row.mata === mata) {
-      editHakAkses({
-        variables: {
-          mata: mata,
-          nama: nama,
-          beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-          simbol: simbol,
-          tanggal: tanggal,
-          status: status,
-        },
-      });
-      //setOpen(false);
-      setOpenStatus(true);
-      setStatusTitle("Mata Uang baru berhasil disimpan");
-      setStatusType("success");
-      refetch();
-    } else {
-      setOpenStatus(true);
-      setStatusTitle(`Mata Uang ${mata} sudah terdaftar!`);
-      setStatusType("failed");
-      refetch();
-    }
-  };
-
-  if (loading) return "Loading";
-  if (error) return `Submission error! ${error.message}`;
-
   return (
     <React.Fragment>
-      <EditIcon variant="outlined" onClick={handleClickOpen}></EditIcon>
+      <ButtonCustom data={"Tambah"} status={"add"} onClick={handleClickOpen} />
       <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
-        {/* <DialogTitle sx={{paddingTop: '0'}}>UBAH HAK AKSES</DialogTitle> */}
         <Typography
           sx={{ paddingLeft: "5%", paddingTop: "4%", fontSize: "25px" }}
         >
-          UBAH MATA UANG
+          TAMBAH MATA UANG
         </Typography>
+
         <DialogContent dividers sx={{ marginLeft: "5%", marginRight: "5%" }}>
           <DialogContentText id="alert-dialog-description">
             <Grid container>
-              <Grid item xs={4} sx={{ marginBottom: "3%" }}>
+              <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
                   sx={{ fontSize: "12", color: "black", paddingTop: "7%" }}
                 >
@@ -224,16 +166,38 @@ const UbahMataUang = ({ rows, row }) => {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <DialogContentText
-                  sx={{
-                    color: "black",
-                    fontSize: "12",
-                    fontWeight: 600,
-                    paddingTop: "3.6%",
+                <TextField
+                  name="mata"
+                  variant="outlined"
+                  size="small"
+                  value={mata}
+                  onChange={(e) => {
+                    setMata(e.target.value.toUpperCase());
+                    if (mata === "") {
+                      setSalahMata(true);
+                    }
                   }}
-                >
-                  {mata}
-                </DialogContentText>
+                  error={
+                    mata === " " ||
+                    !salahMata ||
+                    (mata.length < 3 && mata.length !== 0) ||
+                    (mata.length > 3 && mata.length !== 0) ||
+                    mata.match(/[^A-Z]/)
+                  }
+                  helperText={
+                    mata === " " || !salahMata
+                      ? "Mata Uang tidak boleh kosong!"
+                      : ((mata.length < 3 && mata.length !== 0) ||
+                        (mata.length > 3 && mata.length !== 0)
+                          ? "Harus tiga karakter!"
+                          : "") ||
+                        (mata.match(/[^A-Z]/) && "Tidak boleh angka")
+                  }
+                  inputProps={{ inputMode: "text" }}
+                  sx={{
+                    width: "100%",
+                  }}
+                />
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -243,16 +207,27 @@ const UbahMataUang = ({ rows, row }) => {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <DialogContentText
-                  sx={{
-                    color: "black",
-                    fontSize: "12",
-                    fontWeight: 600,
-                    paddingTop: "3.6%",
+                <TextField
+                  name="nama"
+                  variant="outlined"
+                  size="small"
+                  value={nama}
+                  onChange={(e) => {
+                    setNama(e.target.value.toUpperCase());
+                    if (nama === "") {
+                      setSalahNama(true);
+                    }
                   }}
-                >
-                  {nama}
-                </DialogContentText>
+                  error={nama === " " || !salahNama || nama.match(/[^A-Z ]/)}
+                  helperText={
+                    nama === " " || !salahNama
+                      ? "Nama Mata Uang tidak boleh kosong!"
+                      : nama.match(/[^A-Z ]/) && "Masukkan dengan benar!"
+                  }
+                  sx={{
+                    width: "100%",
+                  }}
+                />
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -264,15 +239,19 @@ const UbahMataUang = ({ rows, row }) => {
               <Grid item xs={8}>
                 <TextField
                   name="beli"
-                  value={beli}
                   variant="outlined"
                   size="small"
                   onChange={(e) => {
-                    setBeli(e.target.value);
+                    setBeli(
+                      e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    );
+                    if (beli === "") {
+                      setSalahBeli(true);
+                    }
                   }}
-                  error={beli === "" || beli.match(/[^0-9.,]/)}
+                  error={beli === " " || !salahBeli || beli.match(/[^0-9.,]/)}
                   helperText={
-                    beli === ""
+                    beli === " " || !salahBeli
                       ? "Kurs Beli tidak boleh kosong!"
                       : beli.match(/[^0-9,.]/) && "Harus angka!"
                   }
@@ -280,6 +259,7 @@ const UbahMataUang = ({ rows, row }) => {
                     width: "100%",
                   }}
                 />
+                {console.log(beli)}
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "4%" }}>
                 <DialogContentText
@@ -291,15 +271,19 @@ const UbahMataUang = ({ rows, row }) => {
               <Grid item xs={8}>
                 <TextField
                   name="jual"
-                  value={jual}
                   variant="outlined"
                   size="small"
                   onChange={(e) => {
-                    setJual(e.target.value);
+                    setJual(
+                      e.target.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    );
+                    if (jual === "") {
+                      setSalahJual(true);
+                    }
                   }}
-                  error={jual === "" || jual.match(/[^0-9.,]/)}
+                  error={jual === " " || !salahJual || jual.match(/[^0-9.,]/)}
                   helperText={
-                    jual === ""
+                    jual === " " || !salahJual
                       ? "Kurs Jual tidak boleh kosong!"
                       : jual.match(/[^0-9.,]/) && "Harus angka!"
                   }
@@ -336,16 +320,27 @@ const UbahMataUang = ({ rows, row }) => {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <DialogContentText
-                  sx={{
-                    color: "black",
-                    fontSize: "12",
-                    fontWeight: 600,
-                    paddingTop: "2.5%",
+                <TextField
+                  name="simbol"
+                  variant="outlined"
+                  size="small"
+                  value={simbol}
+                  onChange={(e) => {
+                    setSimbol(e.target.value);
+                    if (simbol === "") {
+                      setSalahSimbol(true);
+                    }                  
                   }}
-                >
-                  {simbol}
-                </DialogContentText>
+                  error={simbol === " " || !salahsimbol || simbol.length > 1}
+                  helperText={
+                    simbol === " " || !salahsimbol
+                      ? "Simbol mata uang tidak boleh kosong!"
+                      : simbol.length > 1 && "Maksimal satu karakter!"
+                  }
+                  sx={{
+                    width: "100%",
+                  }}
+                />
               </Grid>
               <Grid item xs={4} sx={{ marginBottom: "2%" }}>
                 <DialogContentText
@@ -375,23 +370,12 @@ const UbahMataUang = ({ rows, row }) => {
                 </DialogContentText>
               </Grid>
               <Grid item xs={8}>
-                <FormControl
-                  sx={{
-                    width: "100%",
-                    marginTop: "1%",
-                  }}
-                  size="small"
+                <DialogContentText
+                  value={status}
+                  sx={{ paddingTop: "5.5%", fontSize: "12", color: "black" }}
                 >
-                  <Select
-                    value={status}
-                    onChange={(e) => {
-                      setStatus(e.target.value);
-                    }}
-                  >
-                    <MenuItem value={"Aktif"}>Aktif</MenuItem>
-                    <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
-                  </Select>
-                </FormControl>
+                  Aktif
+                </DialogContentText>
               </Grid>
             </Grid>
           </DialogContentText>
@@ -418,7 +402,7 @@ const UbahMataUang = ({ rows, row }) => {
         <StatusModal
           open={handleModal}
           handleClose={() => setHandleModal(false)}
-          title={`Yakin ingin mengubah Mata Uang ${mata}?`}
+          title={"Yakin ingin menambahkan Mata Uang baru?"}
           status={"warning"}
           actions={[
             <ButtonCustom data={"YA"} onClick={handleSave} />,
@@ -426,6 +410,7 @@ const UbahMataUang = ({ rows, row }) => {
               data={"KEMBALI"}
               status={"cancel"}
               onClick={() => setHandleModal(false)}
+              loading={loadingAdd}
             />,
           ]}
           description={
@@ -450,13 +435,11 @@ const UbahMataUang = ({ rows, row }) => {
             <ButtonCustom
               data={"OK"}
               onClick={handleClose}
-              loading={loading}
+              loading={loadingAdd}
             />,
           ]}
         ></StatusModal>
       </Dialog>
     </React.Fragment>
   );
-};
-
-export default UbahMataUang;
+}

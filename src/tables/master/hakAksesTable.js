@@ -9,30 +9,22 @@ import {
   TablePagination,
 } from "@mui/material";
 import React, { useState } from "react";
-import UbahHakAkses from "../../content/master/ubahhakakses.js";
-import { useHakAkses } from "../../graphql/services/HakAkses.js";
+import UbahHakAkses from "../../contents/master/ubahhakakses.js";
 
-const HakAksesTable = () => {
+const HakAksesTable = ({ rows }) => {
   const columns = [
     { id: "kode", headerName: "Kode Hak Akses", align: "center" },
     { id: "akses", headerName: "Nama Hak Akses" },
     { id: "status", headerName: "Status" },
     { id: "aksi", headerName: "Aksi" },
   ];
-
-  const { data, loading, error } = useHakAkses();
   const [page, setPage] = useState(0);
   const [rowPage, setRowPage] = useState(5);
-
-  if (loading) return "Loading";
-  if (error) return `Submission error! ${error.message}`;
-
-  const rows = data.getHakAkses;
-  console.log("hakAkses, ", rows);
   const labelRowsPerPage = "Baris per halaman:";
+
   const labelDisplayedRows = ({ from, to, count }) => {
-    return `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`
-  }
+    return `${from}-${to} dari ${count !== -1 ? count : `lebih dari ${to}`}`;
+  };
 
   const handleChangePage = (event, newpage) => {
     setPage(newpage);
@@ -45,7 +37,9 @@ const HakAksesTable = () => {
 
   return (
     <Paper>
-      <TableContainer sx={{ width: '100%', maxHeight: 380, borderRadius: '5px' }}>
+      <TableContainer
+        sx={{ width: "100%", maxHeight: 380, borderRadius: "5px" }}
+      >
         <Table>
           <TableHead>
             <TableRow>

@@ -1,6 +1,6 @@
 import { useLazyQuery } from "@apollo/client";
 import React, { createContext, useEffect, useState, useRef } from "react";
-import { GET_USERS } from "../graphql/services/User";
+import { GET_USERS } from "../graphql/services/User.js";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -47,7 +47,7 @@ const AuthProvider = ({ children }) => {
         
       }
     }
-  }, [authState.user]);
+  }, [getUserSession, navigate, authState.user]);
 
   const login = (token, nik) => {
     setAuthState({ token, user: null });

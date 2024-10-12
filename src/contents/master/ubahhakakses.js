@@ -1,34 +1,33 @@
-import * as React from "react";
-import { useEffect } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import EditIcon from "@mui/icons-material/Edit";
-import { Grid, Menu, MenuItem, Select, Typography } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import NativeSelect from "@mui/material/NativeSelect";
-import { useEditHakAkses } from "../../graphql/services/HakAkses";
-import { GET_HAK_AKSES, useHakAkses } from "../../graphql/services/HakAkses";
-import { ButtonCustom } from "../../Components/Button";
-import { StatusModal } from "../../Components/Modal";
-import HakAkses from "./hakakses";
+import { useEffect, useState, Fragment } from "react";
+import {
+  Grid,
+  MenuItem,
+  Select,
+  Typography,
+  FormControl,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from "@mui/material";
+import { useEditHakAkses } from "../../graphql/services/HakAkses.js";
+import { GET_HAK_AKSES, useHakAkses } from "../../graphql/services/HakAkses.js";
+import { ButtonCustom, ButtonAction } from "../../components/Button.js";
+import { StatusModal } from "../../components/Modal.js";
 
 const UbahHakAkses = ({ rows, row }) => {
-  const [open, setOpen] = React.useState(false);
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  //const [formData, setFormData] = React.useState({ nama: "", status: "" });
-  const [kode, setKode] = React.useState("");
-  const [hakAkses, setHakAkses] = React.useState("");
-  const [status, setStatus] = React.useState("");
-  const [editHakAkses, { loading, error }] = useEditHakAkses();
-  const [handleModal, setHandleModal] = React.useState(false);
-  const [openStatus, setOpenStatus] = React.useState(false);
-  const [statusTitle, setStatusTitle] = React.useState("");
-  const [statusType, setStatusType] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  //const [formData, setFormData] = useState({ nama: "", status: "" });
+  const [kode, setKode] = useState("");
+  const [hakAkses, setHakAkses] = useState("");
+  const [status, setStatus] = useState("");
+  const [editHakAkses, { loadingEdit }] = useEditHakAkses();
+  const [handleModal, setHandleModal] = useState(false);
+  const [openStatus, setOpenStatus] = useState(false);
+  const [statusTitle, setStatusTitle] = useState("");
+  const [statusType, setStatusType] = useState("");
   const { refetch } = useHakAkses({
     refetchQueries: [{ query: GET_HAK_AKSES }],
   });
@@ -40,7 +39,7 @@ const UbahHakAkses = ({ rows, row }) => {
 
   const handleClose = () => {
     setSelectedRow(null);
-    setHandleModal(false)
+    setHandleModal(false);
     setOpen(false);
     setOpenStatus(false);
     refetch();
@@ -62,7 +61,7 @@ const UbahHakAkses = ({ rows, row }) => {
     //   nama: formData.nama,
     //   status: e.target.value,
     // });
-    setStatus(e.target.value)
+    setStatus(e.target.value);
   };
 
   useEffect(
@@ -73,12 +72,12 @@ const UbahHakAkses = ({ rows, row }) => {
         //   nama: selectedRow.nama,
         //   status: selectedRow.status,
         // });
-        setKode(selectedRow.kode)
-        setHakAkses(selectedRow.nama)
-        setStatus(selectedRow.status)
+        setKode(selectedRow.kode);
+        setHakAkses(selectedRow.nama);
+        setStatus(selectedRow.status);
       }
     },
-    [selectedRow],
+    [selectedRow]
     //console.log(formData.kode, formData.nama, formData.status)
   );
 
@@ -124,19 +123,19 @@ const UbahHakAkses = ({ rows, row }) => {
     }
   };
 
-  if (loading) return "Loading";
-  if (error) return `Submission error! ${error.message}`;
-
   return (
-    <React.Fragment >
-      <EditIcon variant="outlined" onClick={handleClickOpen}></EditIcon>
+    <Fragment>
+      <ButtonAction type={"edit"} onClick={handleClickOpen} />
       <Dialog fullWidth maxWidth="sm" open={open} onClose={handleClose}>
-        {/* <DialogTitle sx={{paddingTop: '0'}}>UBAH HAK AKSES</DialogTitle> */}
-        <Typography sx={{paddingLeft: '5%', paddingTop: '4%', fontSize: '25px'}}>UBAH HAK AKSES</Typography>
-        <DialogContent dividers sx={{marginLeft: '5%', marginRight: '5%'}}>
-          <Grid container >
-            <Grid item xs={3} sx={{marginBottom: '3%'}}>
-              <DialogContentText sx={{ fontSize: '12', color: 'black' }}>
+        <Typography
+          sx={{ paddingLeft: "5%", paddingTop: "4%", fontSize: "25px" }}
+        >
+          UBAH HAK AKSES
+        </Typography>
+        <DialogContent dividers sx={{ marginLeft: "5%", marginRight: "5%" }}>
+          <Grid container>
+            <Grid item xs={3} sx={{ marginBottom: "3%" }}>
+              <DialogContentText sx={{ fontSize: "12", color: "black" }}>
                 ID
               </DialogContentText>
             </Grid>
@@ -151,8 +150,10 @@ const UbahHakAkses = ({ rows, row }) => {
                 {kode}
               </Typography>
             </Grid>
-            <Grid item xs={3} sx={{marginBottom: '3%'}}>
-              <DialogContentText sx={{ paddingTop: "9%", fontSize: '12', color: 'black' }}>
+            <Grid item xs={3} sx={{ marginBottom: "3%" }}>
+              <DialogContentText
+                sx={{ paddingTop: "9%", fontSize: "12", color: "black" }}
+              >
                 Hak Akses
               </DialogContentText>
             </Grid>
@@ -163,10 +164,13 @@ const UbahHakAkses = ({ rows, row }) => {
                 size="small"
                 value={hakAkses}
                 onChange={(e) => {
-                  setHakAkses(e.target.value)
+                  setHakAkses(e.target.value);
                 }}
                 error={hakAkses === "" || hakAkses.match(/[^A-Za-z ]/)}
-                helperText={hakAkses === "" && "Hak Akses tidak boleh kosong!" || hakAkses.match(/[^A-Za-z ]/) && "Hak Akses harus huruf!"}
+                helperText={
+                  (hakAkses === "" && "Hak Akses tidak boleh kosong!") ||
+                  (hakAkses.match(/[^A-Za-z ]/) && "Hak Akses harus huruf!")
+                }
                 sx={{
                   width: "100%",
                 }}
@@ -180,16 +184,17 @@ const UbahHakAkses = ({ rows, row }) => {
                 ></input> */}
             </Grid>
             <Grid item xs={3}>
-              <DialogContentText sx={{ paddingTop: "10%", fontSize: '12', color: 'black' }}>
+              <DialogContentText
+                sx={{ paddingTop: "10%", fontSize: "12", color: "black" }}
+              >
                 Status
               </DialogContentText>
             </Grid>
             <Grid item xs={9}>
               <FormControl
-                
                 sx={{
                   width: "100%",
-                  marginTop: '1%'
+                  marginTop: "1%",
                 }}
                 size="small"
               >
@@ -201,17 +206,13 @@ const UbahHakAkses = ({ rows, row }) => {
                   <option value={"Aktif"}>Aktif</option>
                   <option value={"Tidak Aktif"}>Tidak Aktif</option>
                 </NativeSelect> */}
-                <Select 
-                  value={status}
-                  onChange={handleFieldChange}
-                >
+                <Select value={status} onChange={handleFieldChange}>
                   <MenuItem value={"Aktif"}>Aktif</MenuItem>
                   <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
                   {/* <option value={"Aktif"}>Aktif</option>
                   <option value={"Tidak Aktif"}>Tidak Aktif</option> */}
                 </Select>
               </FormControl>
-
             </Grid>
           </Grid>
           <DialogActions>
@@ -237,9 +238,13 @@ const UbahHakAkses = ({ rows, row }) => {
                 {/* <Button variant="contained" size="small" onClick={handleClose}>
                   BATAL
                 </Button> */}
-                <ButtonCustom data={"BATAL"} status={"cancel"} onClick={handleClose} />
+                <ButtonCustom
+                  data={"BATAL"}
+                  status={"cancel"}
+                  onClick={handleClose}
+                />
               </Grid>
-            </Grid> 
+            </Grid>
           </DialogActions>
         </DialogContent>
         <StatusModal
@@ -277,12 +282,12 @@ const UbahHakAkses = ({ rows, row }) => {
             <ButtonCustom
               data={"OK"}
               onClick={handleClose}
-              loading={loading}
+              loading={loadingEdit}
             />,
           ]}
         ></StatusModal>
       </Dialog>
-    </React.Fragment>
+    </Fragment>
   );
 };
 

@@ -8,10 +8,9 @@ import {
     TableRow,
     TablePagination,
   } from "@mui/material";
-  import React, { useEffect, useState } from "react";
+  import React, { useState } from "react";
   import { useMataUang } from "../../graphql/services/MataUang.js";
-import TambahMataUang from "../../content/master/tambahmatauang.js";
-import UbahMataUang from "../../content/master/ubahmatauang.js";
+import UbahMataUang from "../../contents/master/ubahmatauang.js";
   
   const MataUangTable = () => {
     const columns = [

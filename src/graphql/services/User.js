@@ -38,7 +38,7 @@ export const GET_SESSION_USER = gql`
       val_date
     }
   }
-`
+`;
 
 export const LOGIN = gql`
   mutation Login($nik: String!, $password: String!) {
@@ -57,5 +57,5 @@ export const LOGIN = gql`
 `;
 
 export const useGetUser = () => {
-  return useQuery (GET_USER)
-}
+  return useQuery(GET_USER);
+};

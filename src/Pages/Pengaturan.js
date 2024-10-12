@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import Navbar from "../Components/Navbar";
-import Subnavbar from "../Components/Subnavbar";
-import Sidebar from "../Components/Sidebar";
-import Content from "../Components/Content";
-import Footer from "../Components/Footer";
+import React, { useState } from "react";
+import Navbar from "../components/Navbar.js";
+import Subnavbar from "../components/Subnavbar.js";
+import Sidebar from "../components/Sidebar.js";
+import Content from "../components/Content.js";
+import Footer from "../components/Footer.js";
 import { Typography, Box, Grid } from "@mui/material";
-import { useGetNav } from "../graphql/services/Menu";
-import { AuthContext } from "../auth/AuthWrapper";
-import { useNavigate } from "react-router-dom";
+import { useGetNav } from "../graphql/services/Menu.js";
 
 const Pengaturan = ({ menuItem, user }) => {
   const { data, loading, error } = useGetNav();

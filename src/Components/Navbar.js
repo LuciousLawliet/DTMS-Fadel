@@ -13,11 +13,11 @@ import {
   Avatar,
 } from "@mui/material";
 import Logo from "../assets/images/logo-simplified.png";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { AuthContext } from "../auth/AuthWrapper";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown.js";
+import { AuthContext } from "../auth/AuthWrapper.js";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
-import { LOGOUT } from "../graphql/services/auth";
+import { LOGOUT } from "../graphql/services/auth.js";
 
 const Navbar = ({ user }) => {
   const settings = ["Ubah Profil", "Buku Panduan", "Bantuan"];
@@ -27,9 +27,9 @@ const Navbar = ({ user }) => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
   const handleHomeNavigate = () => {
-    navigate('/pengaturan')
+    navigate("/pengaturan");
     window.location.reload();
-}
+  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
