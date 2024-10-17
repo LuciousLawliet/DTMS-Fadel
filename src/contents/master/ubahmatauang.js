@@ -22,15 +22,6 @@ import { StatusModal } from "../../components/Modal.js";
 const UbahMataUang = ({ rows, row }) => {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  // const [formData, setFormData] = useState({
-  //   mata: "",
-  //   nama: "",
-  //   beli: "",
-  //   jual: "",
-  //   tengah: "",
-  //   simbol: "",
-  //   status: "",
-  // });
   const [mata, setMata] = useState("");
   const [nama, setNama] = useState("");
   const [beli, setBeli] = useState("");
@@ -65,46 +56,8 @@ const UbahMataUang = ({ rows, row }) => {
     refetch();
   };
 
-  // Mengatasi perubahan komponen-komponen
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: value,
-  //   }));
-  // };
-
-  // Mengatasi perubahan komponen, hanya select
-  // const handleFieldChange = (e) => {
-  //   setFormData({
-  //     mata: mata,
-  //     nama: nama,
-  //     beli: beli.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-  //     jual: jual.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-  //     tengah: tengah.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-  //     simbol: simbol,
-  //     status: e.target.value,
-  //   });
-  //   setMata(mata)
-  //   setNama(nama)
-  //   setBeli(beli)
-  //   setJual(jual)
-  //   setTengah(tengah)
-  //   setSimbol(simbol)
-  //   setStatus(e.target.value);
-  // };
-
   useEffect(() => {
     if (selectedRow) {
-      // setFormData({
-      //   mata: selectedRow.mata,
-      //   nama: selectedRow.nama,
-      //   beli: selectedRow.beli,
-      //   jual: selectedRow.jual,
-      //   tengah: selectedRow.tengah,
-      //   simbol: selectedRow.simbol,
-      //   status: selectedRow.status,
-      // });
       setMata(selectedRow.mata);
       setNama(selectedRow.nama);
       setBeli(selectedRow.beli);

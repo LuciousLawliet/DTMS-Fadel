@@ -175,13 +175,6 @@ const UbahHakAkses = ({ rows, row }) => {
                   width: "100%",
                 }}
               />
-              {/* <input
-                  value={formData.nama}
-                  onChange={
-                    handleChange
-                  }
-                  size="45"
-                ></input> */}
             </Grid>
             <Grid item xs={3}>
               <DialogContentText
@@ -198,19 +191,9 @@ const UbahHakAkses = ({ rows, row }) => {
                 }}
                 size="small"
               >
-                {/* <NativeSelect
-                  
-                  value={formData.status}
-                  onChange={handleFieldChange}
-                >
-                  <option value={"Aktif"}>Aktif</option>
-                  <option value={"Tidak Aktif"}>Tidak Aktif</option>
-                </NativeSelect> */}
                 <Select value={status} onChange={handleFieldChange}>
                   <MenuItem value={"Aktif"}>Aktif</MenuItem>
                   <MenuItem value={"Tidak Aktif"}>Tidak Aktif</MenuItem>
-                  {/* <option value={"Aktif"}>Aktif</option>
-                  <option value={"Tidak Aktif"}>Tidak Aktif</option> */}
                 </Select>
               </FormControl>
             </Grid>
@@ -224,20 +207,9 @@ const UbahHakAkses = ({ rows, row }) => {
               marginBottom="5%"
             >
               <Grid item>
-                {/* <Button
-                  variant="contained"
-                  size="small"
-                  type="submit"
-                  onClick={handleSimpan}
-                >
-                  SIMPAN
-                </Button> */}
                 <ButtonCustom data={"SIMPAN"} onClick={handleSimpan} />
               </Grid>
               <Grid item>
-                {/* <Button variant="contained" size="small" onClick={handleClose}>
-                  BATAL
-                </Button> */}
                 <ButtonCustom
                   data={"BATAL"}
                   status={"cancel"}

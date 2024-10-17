@@ -28,6 +28,6 @@ export const PengaturanContainer = () => {
   }
 
   const menuItem = data.getMenuList;
-  console.log("first, ", authState.nik);
+
   return <Pengaturan menuItem={menuItem} user={authState.user} />;
 };

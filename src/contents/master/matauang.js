@@ -25,7 +25,7 @@ const MataUang = () => {
 
       <SearchIcon sx={{ marginLeft: "93%", marginBottom: "1%" }}></SearchIcon>
 
-      <MataUangTable />
+      <MataUangTable rows={rows} />
 
       <Container
         sx={{
